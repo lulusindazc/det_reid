@@ -243,7 +243,7 @@ def reid_draw_multi(pre_res, result):
         id_name_res = list(pre_res.keys())
 
         id_name = id_name_res[index_min_dist]
-        left, top, right, bottom = pre_res[id_name]
+        left, top, right, bottom,_ = pre_res[id_name]
         # dic_res[id_name] = [left, top, right, bottom]
         return id_name
 
@@ -524,7 +524,8 @@ def callback(param_tuple):  # param_tuple
         result = item
         if (len(result) > 0):
             left, top, right, bottom, id_name = reid_draw(frame, result, model, cfg, huojia1_id, pre_res,change_idnum)
-            dict_res[id_name] = [left, top, right, bottom, huojia1_id]
+            if id_name != 999:
+                dict_res[id_name] = [left, top, right, bottom, huojia1_id]
 
     cv2.imshow('Cam2', cv2.resize(frame, (int(512 * wh_ratio), 512)))
 
@@ -602,14 +603,19 @@ def main(camera_id, shelf_id):
 
         if compare_dic(dic, dic_change) == False:
             pass
-            pre_res = dict_res
+
         else:
             dic = xuanze(res, frame_origin, model, cfg, threadPubMsg_dict, camera_id, dic, dic_change,
                                       huojia1_id, frame_trans,pre_res)
-            pre_res = {}
+
         #print("**********************")
         #print("dic_change_shelf_{}: {}".format(shelf_id[0], dic))
         #print("")
+        change_idnum = len(pre_res.keys()) == len(res)
+        if change_idnum:
+            pre_res = dict_res
+        else:
+            pre_res = {}
         dic_change = dic
 
 
